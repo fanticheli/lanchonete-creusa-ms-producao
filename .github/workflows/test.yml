@@ -23,4 +23,9 @@ jobs:
 
     - name: Run tests
       run: npm test
+    
+    - name: SonarCloud Scan
+      run: |
+          npm install -g sonarcloud
+          sonar-scanner -Dsonar.login=${{ secrets.SONAR_TOKEN }}
       
