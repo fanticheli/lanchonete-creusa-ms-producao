@@ -1,7 +1,8 @@
-name: SONAR
+name: SonarCloud Scan
+
 on:
   workflow_run:
-    workflows: ["TEST"]
+    workflows: ["Test-unit"]
     types:
       - completed
 jobs:
