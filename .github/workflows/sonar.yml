@@ -17,3 +17,13 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@master
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  
+  wait-sonarcloud:
+    needs: sonarcloud
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait for SonarCloud status
+        uses: chrispat/wait-for-sonarcloud-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
