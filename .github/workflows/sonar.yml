@@ -1,10 +1,9 @@
 name: SONAR
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [opened, synchronize, reopened]
+  workflow_run:
+    workflows: ["TEST"]
+    types:
+      - completed
 jobs:
   sonarcloud:
     name: SonarCloud
