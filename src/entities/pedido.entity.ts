@@ -13,7 +13,7 @@ export class Pedido {
 		this._cliente = pedidoProps.cliente;
 		this._produtos = pedidoProps.produtos;
 		this._numeroPedido = pedidoProps.numeroPedido;
-		this._statusPedido = StatusPedidoEnum.RECEBIDO;
+		this._statusPedido = StatusPedidoEnum.PREPARACAO;
 	}
 
 	get id(): string {

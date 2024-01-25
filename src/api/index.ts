@@ -17,7 +17,7 @@ export class LanchoneteCreusa {
 		lanchoneteCreusa.use("/api", indexRoutes);
 		lanchoneteCreusa.use("/api-json", docsRoutes);
 		lanchoneteCreusa.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-		lanchoneteCreusa.use("/api/pedidos", pedidosRoutes);
+		lanchoneteCreusa.use("/api/producao-pedidos", pedidosRoutes);
 
 		lanchoneteCreusa.listen(PORT, () => {
 			console.log(`Lanchonete da Creusa app listening on port ${PORT}`);

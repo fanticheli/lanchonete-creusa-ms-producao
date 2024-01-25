@@ -1,3 +1,4 @@
+import axios from "axios";
 import { PedidoOutput } from "../adapters/pedido";
 import { StatusPedidoEnum } from "../common/enum/status-pedido-enum";
 import { Pedido } from "../entities/pedido.entity";
@@ -48,6 +49,8 @@ export class PedidoUseCases {
 
 		pedidoEncontrado.statusPedido = statusPedido;
 
+		await PedidoUseCases.AlertarAlteracaoStatusPedido(pedidoEncontrado.id, statusPedido);
+
 		return pedidoGatewayInterface.EditarPedido(pedidoEncontrado);
 	}
 
@@ -55,5 +58,29 @@ export class PedidoUseCases {
 		pedidoGatewayInterface: IPedidoGateway
 	): Promise<PedidoOutput[]> {
 		return pedidoGatewayInterface.ListarPedidos();
+	}
+
+	static async AlertarAlteracaoStatusPedido(
+		idPedido: string,
+		statusPedido: StatusPedidoEnum
+	): Promise<any> {
+
+		const apiUrl = process.env.MS_PEDIDO_URL || '';
+
+		if (!apiUrl) {
+			throw new Error('Webhook de pedidos não configurado');
+		}
+
+		try {
+			const pagamento = await axios.put(`${apiUrl}/${idPedido}/status-pedido`, {
+				statusPedido,
+			});
+
+			return pagamento.data;
+		}
+		catch (error) {
+			throw new Error('Não foi possível chamar o webhook de pedido');
+		}
+
 	}
 }
