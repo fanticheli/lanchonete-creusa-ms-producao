@@ -1,9 +1,12 @@
+import axios from "axios";
 import { CategoriaEnum } from "../../src/common/enum/categoria-enum";
 import { StatusPagamentoEnum } from "../../src/common/enum/status-pagamento-enum";
 import { StatusPedidoEnum } from "../../src/common/enum/status-pedido-enum";
 import { PedidoProps } from "../../src/entities/props/pedido.props";
 import { PedidoRepositoryInMemory } from "../../src/external/memory/pedido.repository";
 import { PedidoUseCases } from "../../src/usecases/pedido";
+
+jest.mock('axios');
 
 describe("Pedido", () => {
 	const pedidoRepository = new PedidoRepositoryInMemory();
@@ -14,7 +17,7 @@ describe("Pedido", () => {
 			produtos: [{descricao: "1", categoria: CategoriaEnum.BEBIDA}],
 			cliente: "Cliente 1",
 			numeroPedido: 1,
-			statusPedido: StatusPedidoEnum.RECEBIDO,
+			statusPedido: StatusPedidoEnum.PREPARACAO,
 		};
 
 		const novoPedido = await PedidoUseCases.CriarPedido(
@@ -27,7 +30,7 @@ describe("Pedido", () => {
 		expect(novoPedido.produtos).toHaveLength(1);
 		expect(novoPedido.numeroPedido).toBe(1);
 		expect(novoPedido.cliente).toBe("Cliente 1");
-		expect(novoPedido.statusPedido).toBe(StatusPedidoEnum.RECEBIDO);
+		expect(novoPedido.statusPedido).toBe(StatusPedidoEnum.PREPARACAO);
 	});
 
 	test("Deve buscar um pedido por ID", async () => {
@@ -41,10 +44,16 @@ describe("Pedido", () => {
 		expect(pedidoEncontrado?.produtos).toHaveLength(1);
 		expect(pedidoEncontrado?.numeroPedido).toBe(1);
 		expect(pedidoEncontrado?.cliente).toBe("Cliente 1");
-		expect(pedidoEncontrado?.statusPedido).toBe(StatusPedidoEnum.RECEBIDO);
+		expect(pedidoEncontrado?.statusPedido).toBe(StatusPedidoEnum.PREPARACAO);
 	});
 
 	test("Deve alterar o status de um pedido", async () => {
+		const mockResponse = {
+			data: {},
+		};
+
+		axios.put.mockImplementation(() => Promise.resolve(mockResponse));
+
 		const pedidoEmPreparo = await PedidoUseCases.AlterarStatusPedido(
 			pedidoRepository,
 			"01",
