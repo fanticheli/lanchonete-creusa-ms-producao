@@ -1,1 +1,1 @@
-export * from "./gateway/cliente.gateway.interface";
+export * from "./gateway/pedido.gateway.interface";
