@@ -28,19 +28,22 @@ export class PedidoRepositoryInMemory implements IPedidoGateway {
 	}
 
 	async EditarPedido(editarPedidoDTO: PedidoProps): Promise<PedidoOutput> {
-		if (!editarPedidoDTO.id) {
-			throw new Error("ID do Pedido não informado");
-		}
+        if (!editarPedidoDTO.id) {
+            throw new Error("ID do Pedido não informado");
+        }
 
-		this.pedidos.map((Pedido) => {
-			if (Pedido.id === editarPedidoDTO.id) {
-				Pedido.statusPedido = editarPedidoDTO.statusPedido;
-			}
-		});
+        const pedidoIndex = this.pedidos.findIndex(
+            (pedido) => pedido.id === editarPedidoDTO.id
+        );
 
-		return editarPedidoDTO;
-	}
+        if (pedidoIndex === -1) {
+            throw new Error("ID do Pedido não informado");
+        }
 
+        this.pedidos[pedidoIndex].statusPedido = editarPedidoDTO.statusPedido;
+
+        return this.pedidos[pedidoIndex].object;
+    }
 	async ListarPedidos(): Promise<PedidoOutput[]> {
 		return this.pedidos.map((pedido) => pedido.object);
 	}

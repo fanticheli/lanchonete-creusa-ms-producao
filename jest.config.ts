@@ -32,8 +32,15 @@ const config: Config = {
   // coverageDirectory: undefined,
 
   // An array of regexp pattern strings used to skip coverage collection
-  // coveragePathIgnorePatterns: [
-  //   "/node_modules/"
+ coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "src/api",
+    "src/external",
+    "src/interfaces",
+    "src/index",
+    "src/controllers",
+    "src/entities",
+  ],
   // ],
 
   // Indicates which provider should be used to instrument code for coverage
