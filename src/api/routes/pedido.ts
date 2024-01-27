@@ -13,7 +13,7 @@ const pedidoRepositoryInMongo = new PedidoRepositoryInMongo();
 
 /**
  * @swagger
- * /api/pedidos:
+ * /api/producao-pedidos:
  *   post:
  *     summary: Cria um novo pedido.
  *     tags: [Pedido]
@@ -52,7 +52,7 @@ router.post("/", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/pedidos/{id}:
+ * /api/producao-pedidos/{id}:
  *   get:
  *     summary: Lista pedido por id
  *     tags: [Pedido]
@@ -83,7 +83,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/pedidos/{id}:
+ * /api/producao-pedidos/{id}:
  *   put:
  *     summary: Altera status do pedido do pedido por id
  *     tags: [Pedido]
@@ -127,7 +127,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/pedidos:
+ * /api/producao-pedidos:
  *   get:
  *     summary: Lista todos os pedidos
  *     tags: [Pedido]

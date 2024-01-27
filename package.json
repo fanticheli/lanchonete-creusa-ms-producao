@@ -1,7 +1,7 @@
 {
-  "name": "lanchonte-creusa-clean-arch",
+  "name": "ms-producao",
   "version": "1.0.0",
-  "description": "Sistema de pedidos para lanchonetes. Cadastro de clientes, gestão de produtos e acompanhamento em tempo real. Desenvolvido em Nodejs e MongoDB utilizando clean arch. Melhore o atendimento e satisfação dos clientes.",
+  "description": "Sistema de produção para lanchonetes. Cadastro de clientes, gestão de produtos e acompanhamento em tempo real. Desenvolvido em Nodejs e MongoDB utilizando clean arch. Melhore o atendimento e satisfação dos clientes.",
   "main": "src/index.ts",
   "scripts": {
     "test": "jest --coverage",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/fanticheli/lanchonte-creusa-clean-arch.git"
+    "url": "git+https://github.com/fanticheli/lanchonete-creusa-ms-producao.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/fanticheli/lanchonte-creusa-clean-arch/issues"
+    "url": "https://github.com/fanticheli/lanchonete-creusa-ms-producao/issues"
   },
-  "homepage": "https://github.com/fanticheli/lanchonte-creusa-clean-arch#readme",
+  "homepage": "https://github.com/fanticheli/lanchonete-creusa-ms-producao#readme",
   "devDependencies": {
     "@swc/core": "^1.3.78",
     "@swc/jest": "^0.2.29",
