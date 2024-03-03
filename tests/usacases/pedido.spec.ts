@@ -1,4 +1,4 @@
-import axios from "axios";
+import amqp from 'amqplib';
 import { CategoriaEnum } from "../../src/common/enum/categoria-enum";
 import { StatusPagamentoEnum } from "../../src/common/enum/status-pagamento-enum";
 import { StatusPedidoEnum } from "../../src/common/enum/status-pedido-enum";
@@ -7,7 +7,30 @@ import { PedidoRepositoryInMemory } from "../../src/external/memory/pedido.repos
 import { PedidoUseCases } from "../../src/usecases/pedido";
 import { IPedidoGateway } from "../../src/interfaces";
 
-jest.mock('axios');
+jest.mock('amqplib');
+class MockChannel {
+	assertQueue() {
+		return Promise.resolve();
+	}
+
+	sendToQueue() {
+		return Promise.resolve();
+	}
+}
+
+class MockConnection {
+	createConfirmChannel() {
+		return Promise.resolve(new MockChannel());
+	}
+
+	createChannel() {
+		return Promise.resolve(new MockChannel());
+	}
+
+	close() {
+		return Promise.resolve();
+	}
+}
 
 describe('Pedido', () => {
     const pedidoRepository = new PedidoRepositoryInMemory();
@@ -105,7 +128,7 @@ describe('Pedido', () => {
         };
 
 
-        (axios.put as jest.Mock).mockResolvedValue(mockResponse);
+        (amqp.connect as jest.Mock).mockImplementation(() => Promise.resolve(new MockConnection()));
         const pedidoEmPreparo = await PedidoUseCases.AlterarStatusPedido(
             pedidoRepository,
             '01',
@@ -160,37 +183,6 @@ describe('Pedido', () => {
     test('ListaPedidos - Deve listar todos os pedidos', async () => {
         const pedidos = await PedidoUseCases.ListaPedidos(pedidoRepository);
         expect(pedidos).toHaveLength(2);
-    });
-
-
-    test('Should alert about status change successfully', async () => {
-        process.env.MS_PEDIDO_URL = 'mockedApiUrl';
-
-        (axios.put as jest.Mock).mockResolvedValueOnce({ data: 'alertData' });
-
-        const result = await PedidoUseCases.AlertarAlteracaoStatusPedido('03', StatusPedidoEnum.FINALIZADO);
-
-        expect(result).toBe('alertData');
-        expect(axios.put).toHaveBeenCalledWith('mockedApiUrl/03/status-pedido', { statusPedido: StatusPedidoEnum.FINALIZADO });
-    });
-
-    test('Should throw an error when webhook URL is not configured', async () => {
-        process.env.MS_PEDIDO_URL = '';
-
-        await expect(
-            PedidoUseCases.AlertarAlteracaoStatusPedido('03', StatusPedidoEnum.FINALIZADO)
-        ).rejects.toThrow('Webhook de pedidos não configurado');
-    });
-
-    test('Should throw an error when calling the webhook fails', async () => {
-        process.env.MS_PEDIDO_URL = 'mockedApiUrl';
-
-
-        (axios.put as jest.Mock).mockRejectedValueOnce(new Error('Webhook call failed'));
-
-        await expect(
-            PedidoUseCases.AlertarAlteracaoStatusPedido('03', StatusPedidoEnum.FINALIZADO)
-        ).rejects.toThrow('Não foi possível chamar o webhook de pedido');
     });
 
 });
