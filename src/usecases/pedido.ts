@@ -1,4 +1,4 @@
-import axios from "axios";
+import amqp from "amqplib";
 import { PedidoOutput } from "../adapters/pedido";
 import { StatusPedidoEnum } from "../common/enum/status-pedido-enum";
 import { Pedido } from "../entities/pedido.entity";
@@ -49,7 +49,11 @@ export class PedidoUseCases {
 
 		pedidoEncontrado.statusPedido = statusPedido;
 
-		await PedidoUseCases.AlertarAlteracaoStatusPedido(pedidoEncontrado.id, statusPedido);
+		const wasPublished = await PedidoUseCases.EnviarAlteracaoStatusPedido(pedidoEncontrado.id, statusPedido);
+
+		if (!wasPublished) {
+			throw new Error("Erro ao enviar alteração de status do pedido");
+		}
 
 		return pedidoGatewayInterface.EditarPedido(pedidoEncontrado);
 	}
@@ -60,26 +64,24 @@ export class PedidoUseCases {
 		return pedidoGatewayInterface.ListarPedidos();
 	}
 
-	static async AlertarAlteracaoStatusPedido(
+	static async EnviarAlteracaoStatusPedido(
 		idPedido: string,
 		statusPedido: StatusPedidoEnum
-	): Promise<any> {
-
-		const apiUrl = process.env.MS_PEDIDO_URL || '';
-
-		if (!apiUrl) {
-			throw new Error('Webhook de pedidos não configurado');
-		}
-
+	): Promise<boolean> {
 		try {
-			const pagamento = await axios.put(`${apiUrl}/${idPedido}/status-pedido`, {
-				statusPedido,
+			const connection = await amqp.connect(process.env.QUEUE_HOST || '');
+			const channel = await connection.createConfirmChannel();
+			const queueName = process.env.QUEUE_PRONTOS_NAME || '';
+			await channel.assertQueue(queueName, { durable: true });
+			const messageContent = JSON.stringify({ idPedido, statusPedido });
+			await channel.sendToQueue(queueName, Buffer.from(messageContent), undefined, (err) => {
+				if (err !== null) throw err;
+				connection.close();
 			});
-
-			return pagamento.data;
+			return true;
 		}
 		catch (error) {
-			throw new Error('Não foi possível chamar o webhook de pedido');
+			throw error;
 		}
 
 	}
